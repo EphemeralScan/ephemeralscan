@@ -31,3 +31,6 @@ go.work.sum
 # .idea/
 # .vscode/
 .vscode/
+
+# Local AI agent memory
+.codex-memory.md
