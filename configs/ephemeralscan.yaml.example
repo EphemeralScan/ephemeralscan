@@ -1,0 +1,25 @@
+version: 1
+
+job:
+  name: example-scan
+
+target:
+  url: https://example.com
+
+provider:
+  name: linode
+  region: ca-central
+  instance_type: g6-nanode-1
+
+scanners:
+  - name: zap
+    profile: baseline
+
+reports:
+  directory: ./reports
+  formats:
+    - html
+    - json
+
+cleanup:
+  always_destroy: true
