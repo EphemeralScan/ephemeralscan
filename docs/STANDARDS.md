@@ -121,3 +121,12 @@ Prefer Go standard library whenever possible.
 - remove tests to make builds pass;
 - optimize code before measuring performance;
 - rewrite unrelated code during feature implementation.
+
+## Build Quality
+
+Every commit merged into `main` must:
+
+- build successfully;
+- pass all tests;
+- pass linters;
+- keep the project in a working state.
