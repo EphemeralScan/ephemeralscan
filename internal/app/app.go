@@ -7,6 +7,7 @@ import (
 	"os"
 
 	"github.com/EphemeralScan/ephemeralscan/configs"
+	"github.com/EphemeralScan/ephemeralscan/internal/config"
 )
 
 const Version = "0.1.0-dev"
@@ -41,11 +42,18 @@ func Run() {
 }
 
 func configCommand(args []string, stdout io.Writer) error {
-	if len(args) != 1 || args[0] != "init" {
-		return fmt.Errorf("usage: ephemeralscan config init")
+	if len(args) != 1 {
+		return fmt.Errorf("usage: ephemeralscan config <init|validate>")
 	}
 
-	return initConfig(stdout)
+	switch args[0] {
+	case "init":
+		return initConfig(stdout)
+	case "validate":
+		return validateConfig(stdout)
+	default:
+		return fmt.Errorf("usage: ephemeralscan config <init|validate>")
+	}
 }
 
 func initConfig(stdout io.Writer) error {
@@ -79,6 +87,18 @@ func cleanupIncompleteConfig(file *os.File, cause error) error {
 	return errors.Join(cause, file.Close(), os.Remove(configFileName))
 }
 
+func validateConfig(stdout io.Writer) error {
+	if _, err := config.Load(configFileName); err != nil {
+		return fmt.Errorf("configuration is invalid: %w", err)
+	}
+
+	if _, err := fmt.Fprintln(stdout, "Configuration is valid."); err != nil {
+		return fmt.Errorf("write validation message: %w", err)
+	}
+
+	return nil
+}
+
 func version() {
 	fmt.Printf("EphemeralScan %s\n", Version)
 }
@@ -95,6 +115,7 @@ func usage() {
 	fmt.Println()
 	fmt.Println("Available commands:")
 	fmt.Println("  config init")
+	fmt.Println("  config validate")
 	fmt.Println("  version")
 	fmt.Println("  doctor")
 }
