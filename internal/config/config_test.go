@@ -95,11 +95,24 @@ cleanup:
 			wantErr: "target.url is required",
 		},
 		{
+			name: "missing provider name",
+			content: `
+version: 1
+target:
+  url: https://example.com
+cleanup:
+  always_destroy: true
+`,
+			wantErr: "provider.name is required",
+		},
+		{
 			name: "cleanup disabled",
 			content: `
 version: 1
 target:
   url: https://example.com
+provider:
+  name: linode
 cleanup:
   always_destroy: false
 `,
