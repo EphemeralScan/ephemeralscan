@@ -93,6 +93,14 @@ Prefer Go standard library whenever possible.
 ---
 
 
+## Pull Requests
+
+- One Pull Request should implement one logical feature.
+- Up to three closely related changes may be combined into a single Pull Request.
+- Keep Pull Requests small and easy to review.
+- Unrelated changes must be submitted separately.
+
+
 ## AI Principles
 
 - When uncertain, ask instead of assuming.
@@ -129,4 +137,5 @@ Every commit merged into `main` must:
 - build successfully;
 - pass all tests;
 - pass linters;
-- keep the project in a working state.
+- keep the project in a working state;
+- No Pull Request may reduce the overall project quality.
