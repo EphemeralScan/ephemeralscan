@@ -63,7 +63,55 @@ func TestConfigCommandUsage(t *testing.T) {
 	if err == nil {
 		t.Fatal("configCommand() error = nil, want error")
 	}
-	if !strings.Contains(err.Error(), "ephemeralscan config init") {
+	if !strings.Contains(err.Error(), "ephemeralscan config <init|validate>") {
 		t.Errorf("configCommand() error = %q, want usage", err)
+	}
+}
+
+func TestConfigValidate(t *testing.T) {
+	t.Chdir(t.TempDir())
+
+	if err := os.WriteFile(configFileName, configs.Template(), 0o600); err != nil {
+		t.Fatalf("write configuration: %v", err)
+	}
+
+	var stdout bytes.Buffer
+	if err := configCommand([]string{"validate"}, &stdout); err != nil {
+		t.Fatalf("configCommand() error = %v", err)
+	}
+	if got, want := stdout.String(), "Configuration is valid.\n"; got != want {
+		t.Errorf("output = %q, want %q", got, want)
+	}
+}
+
+func TestConfigValidateInvalidConfiguration(t *testing.T) {
+	t.Chdir(t.TempDir())
+
+	if err := os.WriteFile(configFileName, []byte("version: [\n"), 0o600); err != nil {
+		t.Fatalf("write configuration: %v", err)
+	}
+
+	var stdout bytes.Buffer
+	err := configCommand([]string{"validate"}, &stdout)
+	if err == nil {
+		t.Fatal("configCommand() error = nil, want error")
+	}
+	if !strings.Contains(err.Error(), "configuration is invalid") {
+		t.Errorf("configCommand() error = %q, want validation error", err)
+	}
+	if stdout.Len() != 0 {
+		t.Errorf("output = %q, want no success message", stdout.String())
+	}
+}
+
+func TestConfigValidateMissingFile(t *testing.T) {
+	t.Chdir(t.TempDir())
+
+	err := configCommand([]string{"validate"}, &bytes.Buffer{})
+	if err == nil {
+		t.Fatal("configCommand() error = nil, want error")
+	}
+	if !strings.Contains(err.Error(), "read configuration") {
+		t.Errorf("configCommand() error = %q, want missing file context", err)
 	}
 }
